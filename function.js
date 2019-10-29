@@ -1,23 +1,54 @@
 const Discord = require("discord.js");
+const crypto = require("crypto");
 
-function argsmax(message, infinity){
+module.exports = {
+    noPerm: function(message, perm){
+        const embed = new Discord.RichEmbed()
+        .addField("Error!", "This command require permissions: `"+perm+"`.")
+        .setColor("#FF0000");
+        return message.channel.send(embed);
+    },
 
-    let messageArray = message.content.split(" ");
-    let cmd = messageArray[0];
-    let args = messageArray.slice(1);
+    Error: function(message, perm){
+        const embed = new Discord.RichEmbed()
+        .addField("Error!", ""+perm+"")
+        .setColor("#FF0000");
+        return message.channel.send(embed);
+    },
 
-    let reason = args[infinity];
-    if (args[infinity+1]) { n = 1; }
-    else n = 0;
-            
-    while(n > 0)
-    {
-        n++;
-        if (args[n]){
-            reason = `${reason} ${args[n]}`;
+    noPremium: function(message){
+        const embed = new Discord.RichEmbed()
+        .addField("Error!", "This command require: `Guild Premium`.")
+        .setColor("#FF0000");
+        return message.channel.send(embed);
+    },
+
+    randomHex: function(n){
+        if (n <= 0) {
+            return '';
         }
-        else n = 0;
-    }
+        var rs = '';
+        try {
+            rs = crypto.randomBytes(Math.ceil(n/2)).toString('hex').slice(0,n);
+            /* note: could do this non-blocking, but still might fail */
+        }
+        catch(ex) {
+            /* known exception cause: depletion of entropy info for randomBytes */
+            console.error('Exception generating random string: ' + ex);
+            /* weaker random fallback */
+            rs = '';
+            var r = n % 8, q = (n-r)/8, i;
+            for(i = 0; i < q; i++) {
+                rs += Math.random().toString(16).slice(2);
+            }
+            if(r > 0){
+                rs += Math.random().toString(16).slice(2,i);
+            }
+        }
+        return rs;
+    },
 
-    return reason;
+    formatDate: async function(date){
+        
+    }
 }
