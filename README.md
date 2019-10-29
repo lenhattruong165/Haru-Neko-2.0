@@ -1,8 +1,4 @@
 # Haru-Neko-2.0
-Haru Neko 2.0 - Written by Nodejs
+Haru Neko 2.0 - Using Libary Discord.js
 
-# Requirements before use.
-Open Terminal and write:
-
-npm install discord.js
-npm install nekos.life
+Follow modules and use "npm i <module name>"
