@@ -16,9 +16,9 @@ module.exports = {
             .addField("Guild Commands.", "("+prefix+") `guildsettings ($), setprefix ($), serverinfo`")
             .addField("Anime Commands.", "("+prefix+") `neko, nekogif, foxgirl`")
             .addField("Fun Commands.", "("+prefix+") `kiss, hug, nya, slap`")
-            .addField("Help Commands.", "("+prefix+") `cmds, variablereferece, translate ($)`")
+            .addField("Help Commands.", "("+prefix+") `cmds, variablereferece, translate ($), emojilist`")
             .addField("Search Commands.", "("+prefix+") `azurlane`")
-            .addField("Haru Neko Commands.", "("+prefix+") `ping, botinfo, invite`")
+            .addField("Haru Neko Commands.", "("+prefix+") `ping, botinfo, invite, redeem, e ($)`")
             .addField("More?", "Come to channel #feedback in Server by command to get invite `-invite`")
             .setColor("#FF33FF");
         }

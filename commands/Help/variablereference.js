@@ -39,7 +39,7 @@ module.exports = {
             embed.setAuthor("Variable Reference.");
             embed.setDescription("**__NOTE:__** When you use Embed for Welcome Message, you must be follow step below or your Embed will be Break.");
             embed.addField(`{title:"$1", $2}`, "$1 - Your Message.\n$2 - Must be Avatar/Image URL.\n(Can use `{user.avatar}` or `{server.avatar}`)\n**Note:** If you don't want $2, Just only `{title:"+S1+"}`\n|==========|");
-            embed.addField(`{color:$1}`, "$1 - [Hex Color](https://www.color-hex.com/)\n|==========|");
+            embed.addField(`{color:$1}`, "$1 - [Hex Color](https://www.color-hex.com/)(Can use `{color:random}` for random Color)\n|==========|");
             embed.addField(`{time}`, "Embed Time.\n(Timestamp)\n|==========|");
             embed.addField(`{pingwhenjoin}`, "Mention User as Message.\n|==========|");
             embed.addField(`{footer:"$1", $2}`, "$1 - Your Message.\n$2 - Must be Avatar/Image URL.\n(Can use `{user.avatar}` or `{server.avatar}`)\n**Note:** If you don't want $2, Just only `{footer:"+S1+"}`\n|==========|");

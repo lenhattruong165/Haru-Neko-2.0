@@ -22,6 +22,7 @@ module.exports = {
             if (type.toLowerCase() == "embed"){
                 const embed = new Discord.RichEmbed();
                 if (MSG.includes("{pingwhenjoin}")) { MSG = MSG.replace("{pingwhenjoin}", ``); checkpingwhenjoin = true; }
+                if (MSG.includes("{color:random}")) { MSG = MSG.replace("{color:random}", ``); embed.setColor(`${func.randomHex(6)}`); }
                 if (MSG.includes("{time}")) { MSG = MSG.replace("{time}", ``); embed.setTimestamp(); }
                 var matchfooter = new RegExp('{footer:"(.*)", (.*)}');
                 var footer = MSG.match(matchfooter);
@@ -36,7 +37,7 @@ module.exports = {
                 if(footer){
                     if (MSG.includes(`{footer:"${footer[1]}"}`)) {
                         MSG = MSG.replace(`{footer:"${footer[1]}"}`, ''); 
-                        embed.setFooter(footer[1])                 
+                        embed.setFooter(footer[1])
                         }
                 }
                 var matchcolor = new RegExp('{color:(.*)}');

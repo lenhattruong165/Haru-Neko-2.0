@@ -7,6 +7,7 @@ const _client = new Client({disableEveryone: true});
 const db = require("./db.js");
 const func = require("./function.js");
 const nekoslife = require("nekos.life");
+const emotes = require("./Another/emoji.js");
 const welcome = require("./CommandFunction/guildwelcome.js");
 
 _client.commands = new Collection();
@@ -61,7 +62,7 @@ _client.on("guildMemberAdd", async (member) => {
 
     if(member.guild.id == 580555457983152149){ //Guild Ma Cún - Game Server.
         //member.roles.has("rolename");
-        member.addRole(member.guild.roles.find("name", "Người Chơi"));//Default role
+        member.addRole(member.guild.roles.get("580556269765656587"));//Default role
         if(memmacun.roles.has("582788440161124353"))//id of dj role
         { member.addRole(member.guild.roles.find("name", "DJ")); }
         if(memmacun.roles.has("534583471704899585"))//id of quản trò role
@@ -236,6 +237,64 @@ _client.on("message", async (message) => {
         message.channel.send("A lại nà :3");
     }
 
+    if (cmd == "addcode"){
+        if(message.author.id != 454492255932252160) return;
+        if(!args[0]) {
+            const embed = new Discord.RichEmbed()
+            .setAuthor("Command Help.")
+            .setDescription("<> - Required | [] - Optional")
+            .addField(""+prefix+"addcode <NewCode> <Name> <Value> [Message]", "\n**Guides:** Nothing.")
+            .setColor("#00FFFF");
+            return message.channel.send(embed);
+        }
+        if(args[1].toLowerCase() == "emoji"){
+            if(args.slice(2).join(" ") == "Full Access") {
+                var check = await db.RedeemCode(args[0], "add");
+                if(check == "Error2") return func.Error(message, "This Code is Available.");
+                else {
+                    await db.RedeemCode(args[0], "add", "Emoji", "Full Access");
+                    message.channel.send("Added.");
+                }
+            }
+            else{
+                var hasparse = parseInt(args[2]);
+                if(typeof hasparse != "number") return func.Error(message, "Value of Emoji must be Number.");
+                var check = await db.RedeemCode(args[0], "add");
+                if(check == "Error2") return func.Error(message, "This Code is Available.");
+                else if (await emotes.Emotes(`${args[2]}`) == "Error") return func.Error("This Emoji is Not Available.");
+                else {
+                    await db.RedeemCode(args[0], "add", "Emoji", args[2]);
+                    message.channel.send("Added.");
+                }
+            }
+        }
+        else return func.Error(message, "Only accept `emoji`.");
+    }
+
+    if (cmd == "removecode"){
+        if(message.author.id != 454492255932252160) return;
+        if(!args[0]) {
+            const embed = new Discord.RichEmbed()
+            .setAuthor("Command Help.")
+            .setDescription("<> - Required | [] - Optional")
+            .addField(""+prefix+"removecode <Code>", "\n**Guides:** Nothing.")
+            .setColor("#00FFFF");
+            return message.channel.send(embed);
+        }
+        if(await db.RedeemCode(args[0], "remove") == "Error1") return func.Error(message, "This Code is Not Available.");
+        else {
+            await db.RedeemCode(args[0], "remove");
+            return message.channel.send("Removed.");
+        }
+    }
+
+    if(cmd == "random"){
+        if(!args[0]) return;
+        var a = parseInt(args[0]);
+        if(typeof a != "number") return;
+        return message.channel.send(func.randomHex(a));
+    }
+
     /*if(cmd == "abs"){
         const m = msg => console.log(msg);
         m(`Server ID: ${message.guild.id}`);
@@ -260,8 +319,7 @@ _client.on("message", async (message) => {
         var serverlink = "https://discord.gg/p78wxxN";
         const embed = new Discord.RichEmbed()
         .setAuthor("Haru Neko", _client.user.avatarURL)
-        .setDescription(`Hello ${message.author.toString()}, Here is your choose:\n\n[Invite Me](${botinviteperm})
-            [Vote For Me](${vote})\n[Join Haru Neko's Server](${serverlink})\n\nYou can get Help from Staff when join Haru Neko's Server if you have any questions.`)
+        .setDescription(`Hello ${message.author.toString()}, Here is your choose:\n\n[Invite Me](${botinviteperm})\n[Vote For Me](${vote})\n[Join Haru Neko's Server](${serverlink})\n\nYou can get Help from Staff when join Haru Neko's Server if you have any questions.`)
         .setColor("#FF33FF")
         message.author.send(embed).catch( err => {
             message.channel.send(`${message.author.toString()}, Your DM (Direct Message) are Closed, Please Open it then I can send Invite Informations!`);
@@ -269,7 +327,7 @@ _client.on("message", async (message) => {
     }
 
     if(cmd === "bo" || cmd === "botowner"){
-        if (message.author.id != 454492255932252160 & message.author.id != 628825440538198019) return;
+        if (message.author.id != 454492255932252160 & message.author.id != 628825440538198019 & message.author.id != 372372133088591872 & message.author.id != 531662657690927105) return;
         if(!args[0]) return message.channel.sendMessage(`Your choice.`);
         let arg0 = args[0];
         let arg1 = args[1];
@@ -410,6 +468,31 @@ _client.on("message", async (message) => {
         else if (arg0.toLowerCase() == "welcome"){
             const welcome = require("./CommandFunction/guildwelcome.js");
             welcome.Welcome(message, null, args[1], null, args.slice(2).join(" "));
+        }
+        else if (arg0.toLowerCase() == "split"){
+            var hasparse = parseInt(arg1)
+            countup = hasparse;
+            var msg = null;
+            var c = args.slice(2).join(" ").split(" ");
+            c.forEach( c => {
+                if(msg == null) msg = `if(e=="${countup}"){return "${c}";}`;
+                else msg = `${msg}\nelse if(e=="${countup}"){return "${c}";}`;
+                countup++;
+            });
+            return message.channel.send("`"+msg+"`").catch(()=>{return message.channel.send("Rut gon emoji lai di =.=");})
+        }
+        else if (arg0.toLowerCase() == "user"){
+            if (!arg1) return;
+            if (arg1 == "add"){
+                await db.User(message.author.id);
+                await message.channel.send("Added.")
+                await db.Save("User");
+            }
+            if (arg1 == "remove"){
+                await db.User(message.author.id, "remove");
+                await message.channel.send("Removed.")
+                await db.Save("User");
+            }
         }
         else return message.channel.sendMessage("Data from Command not Found!");
     }
@@ -718,7 +801,7 @@ _client.on("message", async (message) => {
             while(counting <= 16)
             {
                 var letcount = ""+counting+"";
-                var checkuser = message.guild.members.find("nickname", ""+letcount+"");
+                var checkuser = await message.guild.members.find("nickname", ""+letcount+"");
                 if (checkuser){
                     if (result == "") { result = `${letcount} - ${checkuser.user.tag}`; }
                     else { result = `${result}\n${letcount} - ${checkuser.user.tag}` }
