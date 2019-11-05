@@ -2,11 +2,10 @@ const Discord = require("discord.js");
 const db = require("../../db.js");
 const func = require("../../function.js");
 module.exports = {
-    name: "cmds",
-    aliases: ["help", "commands"],
+    name: "profile",
     category: "Help",
-    description: "Returns Help Commands List.",
+    description: "Returns User's Profile.",
     run: async(_client, message, args) => {
-        return func.Error("This feature is Coming Soon.");
+        return func.Error(message ,"This feature is Coming Soon.");
     }
 }

@@ -11,7 +11,6 @@ module.exports = {
         const prefix = db.GuildInfo(message.guild.id, "prefix");
         if (!message.guild.members.get(message.author.id).hasPermission("MANAGE_GUILD")) return func.noPerm(message, "Manage Server");
         const embed = new Discord.RichEmbed()
-        .addField("Prefix.", "My Prefix of this Server is `"+prefix+"`")
         .addField("Command Help.", "`"+prefix+"setprefix <New Prefix>` to set prefix to this Server.\n`"+prefix+"setprefix reset` to set default prefix to `-`")
         .setColor("#00FF00");
         if (!args[0]) return message.channel.send(embed);
@@ -21,7 +20,8 @@ module.exports = {
             .setColor("#00FFFF");
             message.channel.send(embed);
 
-            db.GuildInfo(message.guild.id, "prefix", "-");
+            await db.GuildInfo(message.guild.id, "prefix", "-");
+            await db.Save("GuildInfo");
         }
         else {
             const embed = new Discord.RichEmbed()
@@ -29,7 +29,8 @@ module.exports = {
             .setColor("#00FFFF");
             message.channel.send(embed);
             
-            db.GuildInfo(message.guild.id, "prefix", args.join(" "));
+            await db.GuildInfo(message.guild.id, "prefix", args.join(" "));
+            await db.Save("GuildInfo");
         }  
     }
 }

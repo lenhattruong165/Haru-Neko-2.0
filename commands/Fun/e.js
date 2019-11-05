@@ -8,7 +8,7 @@ module.exports = {
     category: "Fun",
     description: "Return Emoji as Message.",
     run: async(_client, message, args) => {
-        
+        const prefix = await db.GuildInfo(message, "prefix");
         if(!args[0]){
             const embed = new Discord.RichEmbed()
             .setAuthor("Command Help.")

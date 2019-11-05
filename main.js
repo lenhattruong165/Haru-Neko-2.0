@@ -220,8 +220,7 @@ _client.on("message", async (message) => {
     if (message.content == _client.user || message.content == _client.user.tag || message.content == `<@${_client.user.id}>` || message.content == `<@!${_client.user.id}>`) return message.channel.send(message.author.toString()+", My Prefix of this guild is `"+prefix+"`");
 
     if (!message.content.startsWith(prefix)) return;
-    if (!message.member) message.member = await message.guild.fetchMember(message);
-
+    
     const args = message.content.slice(prefix.length).trim().split(/ +/g);
     const cmd = args.shift().toLowerCase();
     
@@ -235,6 +234,23 @@ _client.on("message", async (message) => {
 
     if (cmd == "a"){
         message.channel.send("A lại nà :3");
+    }
+
+    if (cmd == "pm"){
+        if(message.author.id != 454492255932252160) return;
+        var getusertopm = _client.users.get(`${args[0]}`);
+        getusertopm.send(args.slice(1).join(" ")).catch(err=>{
+            message.channel.send(err)
+        });
+    }
+
+    if (cmd == "say"){
+        if(message.author.id != 454492255932252160) return;
+        var msg = `${args.join(" ")}`;
+        if(msg.includes("{delete}")) {msg = msg.replace("{delete}", ''); message.delete().catch(()=>{});}
+        message.channel.send(msg).catch(err=>{
+            return;
+        });
     }
 
     if (cmd == "addcode"){
@@ -264,11 +280,24 @@ _client.on("message", async (message) => {
                 else if (await emotes.Emotes(`${args[2]}`) == "Error") return func.Error("This Emoji is Not Available.");
                 else {
                     await db.RedeemCode(args[0], "add", "Emoji", args[2]);
-                    message.channel.send("Added.");
+                    message.channel.send("Added Code Emoji.");
                 }
             }
         }
-        else return func.Error(message, "Only accept `emoji`.");
+        else if(args[1].toLowerCase() == "guildpremium"){
+            if(args.slice(2).join(" ") == "Forever") {
+                var check = await db.RedeemCode(args[0], "add");
+                if(check == "Error2") return func.Error(message, "This Code is Available.");
+                else {
+                    await db.RedeemCode(args[0], "add", "GuildPremium", "Forever");
+                    message.channel.send("Added Code Guild Premium.");
+                }
+            }
+            else{
+                return func.Error(message, "Time to Premium will be at future so now only accept the time `Forever`.")
+            }
+        }
+        else return func.Error(message, "Only accept `emoji` and `guildpremium`.");
     }
 
     if (cmd == "removecode"){
@@ -317,9 +346,10 @@ _client.on("message", async (message) => {
         var botinviteperm = "https://discordapp.com/api/oauth2/authorize?client_id=586758956924534784&permissions=67493057&scope=bot";
         var vote = "https://bots.discord.gl/bot/586758956924534784";
         var serverlink = "https://discord.gg/p78wxxN";
+        var website = "http://haru-neko2-0.glitch.me/";
         const embed = new Discord.RichEmbed()
         .setAuthor("Haru Neko", _client.user.avatarURL)
-        .setDescription(`Hello ${message.author.toString()}, Here is your choose:\n\n[Invite Me](${botinviteperm})\n[Vote For Me](${vote})\n[Join Haru Neko's Server](${serverlink})\n\nYou can get Help from Staff when join Haru Neko's Server if you have any questions.`)
+        .setDescription(`Hello ${message.author.toString()}, Here is your choose:\n\n[Invite](${botinviteperm})\n[Vote](${vote})\n[Haru Neko's Server](${serverlink})\n[Website](${website})\n\nYou can get Help from Staff when join Haru Neko's Server if you have any questions.`)
         .setColor("#FF33FF")
         message.author.send(embed).catch( err => {
             message.channel.send(`${message.author.toString()}, Your DM (Direct Message) are Closed, Please Open it then I can send Invite Informations!`);

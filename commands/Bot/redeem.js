@@ -75,6 +75,47 @@ module.exports = {
                     return message.channel.send(embed);
                 }
             }
+
+            else if (name.toLowerCase() == "guildpremium"){
+
+                var checkpremium = false;
+                var getpremium = await db.GuildInfo(message.guild.id, "perm");
+                var getguildpremium = `${getpremium}`;
+                if (getguildpremium == "Premium") {checkpremium = true;}
+                
+                if(checkpremium == true) return func.Error(message, "This Guild already have Premium so you can't Redeem.")
+
+                if (value.toLowerCase() == "forever"){
+
+                    await db.GuildInfo(message.guild.id, "perm", "Premium");
+                    await db.GuildInfo(message.guild.id, "permtimeleft", "Forever");
+                    await db.RedeemCode(code, "redeem", "delete");
+                    await db.Save("GuildInfo");
+
+                    embed.setAuthor("Redeem Successfully.")
+                    embed.setDescription("**Code:** `"+code+"`\n**Name:** "+name+"\n**Value:** "+value+"")
+                    embed.setColor("#00FF00");
+                    embed.setTimestamp();
+                    embed.setFooter(`Redeemed by ${message.author.tag}`);
+
+                    return message.channel.send(embed);
+                }
+                else {
+                    await db.GuildInfo(message.guild.id, "perm", "Premium");
+                    await db.GuildInfo(message.guild.id, "permtimeleft", value);
+                    await db.RedeemCode(code, "redeem", "delete");
+                    await db.Save("GuildInfo");
+
+                    embed.setAuthor("Redeem Successfully.")
+                    embed.setDescription("**Code:** `"+code+"`\n**Name:** "+name+"\n**Value:** "+value+"")
+                    embed.setColor("#00FF00");
+                    embed.setTimestamp();
+                    embed.setFooter(`Redeemed by ${message.author.tag}`);
+
+                    return message.channel.send(embed);
+                }
+            }
+
             else {
                 embed.setAuthor("Redeem Successfully.")
                 embed.setDescription("**Code:** `"+code+"`\n**Name:** "+name+"\n**Message:** "+value+"")
