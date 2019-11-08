@@ -1,6 +1,7 @@
 // R E Q U I R E M E N T
 
 const fs = require("fs");
+const moment = require("moment");
 const Discord = require("discord.js");
 const {Client, Collection} = require("discord.js");
 const _client = new Client({disableEveryone: true});
@@ -13,7 +14,13 @@ const welcome = require("./CommandFunction/guildwelcome.js");
 _client.commands = new Collection();
 _client.aliases = new Collection();
 
-const token = fs.readFileSync("./token/discordbot.txt", "utf8")
+const token = fs.readFileSync("./token/discordbot.txt", "utf8");
+
+const supmacun = JSON.parse(fs.readFileSync("./dbjson/masoi.json", "utf8"));
+const macun = Array.from(supmacun);
+
+var xu = "<:coin:584232041386868747>";
+var hoa = "<:rose:584250766819328010>";
 
 _client.login(token);
 
@@ -154,6 +161,7 @@ _client.on('guildMemberRemove', async (member) =>{
 // C L I E N T C O M M A N D
 
 _client.on("message", async (message) => {
+    //if(message.author.id != 454492255932252160) return;
     if (message.author.bot) return;
 
     let dmargs = message.content.slice("-".length).trim().split(/ +/g);
@@ -230,7 +238,81 @@ _client.on("message", async (message) => {
     if (!command) command = _client.commands.get(_client.aliases.get(cmd));
 
     if (command)
-        command.run(_client, message, args);
+        return command.run(_client, message, args);
+
+    if(message.guild.id == 530689610313891840 || message.guild.id == 580555457983152149){
+        if(cmd == "tien"){
+            if(!args[0]){
+                var user = GetUser(message.author.id);
+                const embed = new Discord.RichEmbed()
+                .addField("Túi đồ của bạn!", `Xu: ${user.coins}${xu}\nHoa: ${user.roses}${hoa}\nHoa được tặng: ${user.plrroses}${hoa}`)
+                .setColor("#00FF00");
+                return message.channel.send(embed);
+            }
+            else{
+                var getuser = func.getMember(message, args.join(" "));
+                if(!getuser) return func.Loi(message, "Không tìm thấy Người Chơi.");
+                var forname = ()=>{
+                    if(getuser.user.id == message.author.id) return "bạn";
+                    else return getuser.user.username
+                }
+                var user = GetUser(getuser.user.id);
+                const embed = new Discord.RichEmbed()
+                .addField(`Túi đồ của ${forname()}!`, `Xu: ${user.coins}${xu}\nHoa: ${user.roses}${hoa}\nHoa được tặng: ${user.plrroses}${hoa}`)
+                .setColor("#00FF00");
+                return message.channel.send(embed);
+            }
+        }
+    
+        if(cmd == "daily" || cmd == "hangngay"){
+            if(message.channel.id != 584252031896911872) return;
+            var user = GetUser(message.author.id);
+            if(user.daily != moment().format("L")){
+                user.daily = moment().format("L");
+                user.coins += 10;
+                SaveUser();
+    
+                const embed = new Discord.RichEmbed()
+                .addField("Hàng Ngày!", ` Chào mừng ${message.author.username} đã quay trở lại, Bạn được thưởng 10${xu}`)
+                .setColor("#00FF00");
+                return message.channel.send(embed);
+            }
+            else {
+                var gio = `${moment().endOf('days').fromNow()}`.replace("in ", '').replace("hours", "giờ").replace("hour", "giờ");
+                var phut = `${moment().endOf('hours').fromNow()}`.replace("in ", '').replace("minutes", "phút").replace("minute", "phút");            
+                var thoigianconlai = `${gio} ${phut}`;
+                return func.Loi(message, `Bạn đã nhận thưởng trong ngày hôm nay rồi, vui lòng quay trở lại sau ${thoigianconlai}!`)
+            }
+        }
+
+        if(cmd == "themtien"){
+            if(!message.guild.member(message.author).hasPermission("MANAGE_ROLES")) return func.Loi(message, "Người sử dụng cần có quyền điều hành Role.")
+            if(!args[0]) return func.HeThong(message, "Lệnh `-themtien <NguoiChoi> <SoTien>`");
+            if(!args[1]) return func.Loi(message, "Bạn chưa nhập số tiền muốn thêm.");
+            var getuser = func.getMember(message, args[0]);
+            if(!getuser) return func.Loi(message, "Không tìm thấy Người Chơi.");
+            if(isNaN(args[1])) return func.Loi(message, "Tiền chỉ chấp nhận chữ số.");
+
+            var user = GetUser(getuser.user.id);
+            user.coins = Math.floor(user.coins + parseInt(args[1]));
+            SaveUser();
+            func.HeThong(message, `Đã thêm ${args[1]}${xu} cho ${getuser.user.username} (Giờ có ${user.coins}${xu})`)
+        }
+
+        if(cmd == "xoatien"){
+            if(!message.guild.member(message.author).hasPermission("MANAGE_ROLES")) return func.Loi(message, "Người sử dụng cần có quyền điều hành Role.")
+            if(!args[0]) return func.HeThong(message, "Lệnh `-xoatien <NguoiChoi> <SoTien>`");
+            if(!args[1]) return func.Loi(message, "Bạn chưa nhập số tiền muốn xoá.");
+            var getuser = func.getMember(message, args[0]);
+            if(!getuser) return func.Loi(message, "Không tìm thấy Người Chơi.");
+            if(isNaN(args[1])) return func.Loi(message, "Tiền chỉ chấp nhận chữ số.");
+
+            var user = GetUser(getuser.user.id);
+            user.coins = Math.floor(user.coins - parseInt(args[1]));
+            SaveUser();
+            func.HeThong(message, `Đã xoá ${args[1]}${xu} của ${getuser.user.username} (Giờ có ${user.coins}${xu})`)
+        }
+    }
 
     if (cmd == "a"){
         message.channel.send("A lại nà :3");
@@ -1060,4 +1142,32 @@ function getmakeannounce() {
 function makeannounce(msg) {
     if (msg == "start") return getmakeannounce();
     else return clearTimeout(timeannounce)
+}
+
+function GetUser(id){
+    return GetorCreateUser(id);
+}
+
+function GetorCreateUser(id){
+    var checkuser = macun.find(x => x.id == id);
+    if (!checkuser) {
+        var infotopush = {
+            id: id,
+            coins: 0,
+            roses: 0,
+            plrroses: 0,
+            items: "",
+            daily: ""
+        }
+        macun.push(infotopush);
+        SaveUser();
+    }
+
+    return macun.find(x => x.id == id);
+}
+
+function SaveUser(){
+    fs.writeFile("./dbjson/masoi.json", JSON.stringify(macun), (err) =>{
+        console.log(err);
+    });
 }
