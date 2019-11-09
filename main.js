@@ -22,6 +22,8 @@ const macun = Array.from(supmacun);
 var xu = "<:coin:584232041386868747>";
 var hoa = "<:rose:584250766819328010>";
 
+var anticmd = true;
+
 _client.login(token);
 
 // C O M M A N D S H A N D L E R
@@ -240,7 +242,21 @@ _client.on("message", async (message) => {
     if (command)
         return command.run(_client, message, args);
 
-    if(message.guild.id == 530689610313891840 || message.guild.id == 580555457983152149){
+    if(cmd == "blockcommand"){
+        if(message.author.id != 454492255932252160) return;
+        if(!args[0]) return message.channel.send("Command: -blockcommand <True/False>");
+        if(args[0].toLowerCase() == "true") {
+            message.channel.send("Commands Opened.");
+            anticmd = true;
+        }
+        else if(args[0].toLowerCase() == "false") {
+            message.channel.send("Commands Closed.");
+            anticmd = false;
+        }
+        else return message.channel.send("Command: -blockcommand <True/False>");
+    }
+
+    if((message.guild.id == 530689610313891840 || message.guild.id == 580555457983152149) & anticmd == true){
         if(cmd == "tien"){
             if(!args[0]){
                 var user = GetUser(message.author.id);
