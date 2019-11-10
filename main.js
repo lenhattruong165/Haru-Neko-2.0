@@ -164,7 +164,7 @@ _client.on('guildMemberRemove', async (member) =>{
 // C L I E N T C O M M A N D
 
 _client.on("message", async (message) => {
-    if(message.author.id != 454492255932252160) return;
+    //if(message.author.id != 454492255932252160) return;
     if (message.author.bot) return;
 
     let dmargs = message.content.slice("-".length).trim().split(/ +/g);
