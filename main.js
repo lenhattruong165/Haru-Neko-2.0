@@ -7,7 +7,8 @@ const {Client, Collection} = require("discord.js");
 const _client = new Client({disableEveryone: true});
 const db = require("./db.js");
 const func = require("./function.js");
-const nekoslife = require("nekos.life");
+const nekoclient = require("nekos.life");
+const nekoslife = new nekoclient();
 const emotes = require("./Another/emoji.js");
 const welcome = require("./CommandFunction/guildwelcome.js");
 
@@ -163,7 +164,7 @@ _client.on('guildMemberRemove', async (member) =>{
 // C L I E N T C O M M A N D
 
 _client.on("message", async (message) => {
-    //if(message.author.id != 454492255932252160) return;
+    if(message.author.id != 454492255932252160) return;
     if (message.author.bot) return;
 
     let dmargs = message.content.slice("-".length).trim().split(/ +/g);
@@ -241,6 +242,40 @@ _client.on("message", async (message) => {
 
     if (command)
         return command.run(_client, message, args);
+
+    if(cmd == "purge"){
+        if(message.author.id != 454492255932252160) return;
+        var send = (msg)=>{message.channel.send(msg)};
+        if(!args[0]) return send("Command -purge <Limit>");
+        if(isNaN(args[0])) return send("Limit only accept Number");
+        if(args[0] <= 0) return send("Only accept 1 message(s) above.");
+        var counts = Math.floor(parseInt(args[0]) + 1);
+        if(counts > 100) counts = 100;
+        message.channel.fetchMessages({limit: counts}).then(async (f) =>{
+            const nonPinned = f.filter(m => !m.pinned);
+            await message.channel.bulkDelete(nonPinned, true);
+        });
+    }
+
+    if(cmd == "cyan"){
+        if(message.author.id != 454492255932252160) return;
+        const a = await nekoslife.sfw.pat();
+        const a1 = await nekoslife.sfw.smug();
+        const a2 = await nekoslife.sfw.poke();
+        const a3 = await nekoslife.sfw.kemonomimi();
+        const a4 = await nekoslife.sfw.cuddle();
+        const a5 = await nekoslife.sfw.feed();
+        const a6 = await nekoslife.sfw.fact();
+        const a7 = await nekoslife.sfw.holo();
+        message.channel.send(`Pat: ${a.url}\nSmug: ${a1.url}\nPoke: ${a2.url}\nKemonomimi: ${a3.url}\nCuddle: ${a4.url}\nFeed: ${a5.url}\nFact: ${a6.fact}\nHolo: ${a7.url}`)
+
+
+
+
+
+
+
+    }
 
     if(cmd == "blockcommand"){
         if(message.author.id != 454492255932252160) return;
